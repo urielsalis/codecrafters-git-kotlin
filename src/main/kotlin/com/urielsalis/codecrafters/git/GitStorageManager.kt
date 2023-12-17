@@ -48,6 +48,12 @@ class GitStorageManager(rootDirectory: File) {
         return RawGitObject(type, content)
     }
 
+    fun writeObject(obj: RawGitObject): String {
+        val hash = getObjectHash(obj)
+        writeObject(hash, obj)
+        return hash
+    }
+
     fun writeObject(
         hash: String,
         obj: RawGitObject,
@@ -66,13 +72,27 @@ class GitStorageManager(rootDirectory: File) {
 
     fun makeTree(entries: List<GitTreeEntry>): RawGitObject {
         val entriesRaw =
-            entries
-                .sortedBy { it.name }
+            entries.sortedBy { it.name }
                 .map { "${it.mode} ${it.name}\u0000".toByteArray() + it.hash.hexToByteArray() }
         if (entriesRaw.isEmpty()) {
             return RawGitObject(GitObjectType.TREE, byteArrayOf())
         }
         return RawGitObject(GitObjectType.TREE, entriesRaw.reduce { acc, bytes -> acc + bytes })
+    }
+
+    fun makeCommit(
+        treeHash: String,
+        message: String,
+        parameters: Map<String, String>,
+    ): RawGitObject {
+        val content =
+            mutableListOf(
+                "tree $treeHash",
+                *parameters.map { (key, value) -> "$key $value" }.toTypedArray(),
+                "",
+                message,
+            ).joinToString("\n").toByteArray()
+        return RawGitObject(GitObjectType.COMMIT, content)
     }
 
     private fun getDiskRepresentation(obj: RawGitObject): ByteArray =

@@ -24,15 +24,14 @@ class WriteTreeCommand : Callable<Unit> {
         dir: File,
     ): String {
         val entries =
-            dir.listFiles().filter { !it.name.startsWith(".") }?.map {
+            dir.listFiles()?.filter { !it.name.startsWith(".") }?.map {
                 if (it.isDirectory) {
                     val hash = writeTreeInternal(storage, parser, it)
                     GitTreeEntry("40000", it.name, hash)
                 } else {
                     val contents = it.readBytes()
                     val rawObject = RawGitObject(GitObjectType.BLOB, contents)
-                    val hash = storage.getObjectHash(rawObject)
-                    storage.writeObject(hash, rawObject)
+                    val hash = storage.writeObject(rawObject)
                     if (it.canExecute()) {
                         GitTreeEntry("100755", it.name, hash)
                     } else {
@@ -41,8 +40,7 @@ class WriteTreeCommand : Callable<Unit> {
                 }
             } ?: emptyList()
         val tree = storage.makeTree(entries)
-        val hash = storage.getObjectHash(tree)
-        storage.writeObject(hash, tree)
+        val hash = storage.writeObject(tree)
         return hash
     }
 }
