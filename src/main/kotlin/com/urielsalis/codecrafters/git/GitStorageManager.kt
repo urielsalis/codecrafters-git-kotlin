@@ -1,6 +1,7 @@
 package com.urielsalis.codecrafters.git
 
 import com.urielsalis.codecrafters.git.domain.GitObjectType
+import com.urielsalis.codecrafters.git.domain.GitTreeEntry
 import com.urielsalis.codecrafters.git.domain.RawGitObject
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -61,6 +62,17 @@ class GitStorageManager(rootDirectory: File) {
         sha1.reset()
         sha1.update(getDiskRepresentation(obj))
         return sha1.digest().toHexString()
+    }
+
+    fun makeTree(entries: List<GitTreeEntry>): RawGitObject {
+        val entriesRaw =
+            entries
+                .sortedBy { it.name }
+                .map { "${it.mode} ${it.name}\u0000".toByteArray() + it.hash.hexToByteArray() }
+        if (entriesRaw.isEmpty()) {
+            return RawGitObject(GitObjectType.TREE, byteArrayOf())
+        }
+        return RawGitObject(GitObjectType.TREE, entriesRaw.reduce { acc, bytes -> acc + bytes })
     }
 
     private fun getDiskRepresentation(obj: RawGitObject): ByteArray =
