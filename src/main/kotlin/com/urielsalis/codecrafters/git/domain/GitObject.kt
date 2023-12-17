@@ -7,3 +7,16 @@ data class GitBlobObject(override val hash: String, val content: ByteArray) : Gi
         return String(content)
     }
 }
+
+data class GitTreeObject(override val hash: String, val entries: List<GitTreeEntry>) :
+    GitObject(hash) {
+    override fun toString(): String {
+        return entries.joinToString("\n")
+    }
+}
+
+data class GitTreeEntry(val mode: String, val name: String, val hash: String) {
+    override fun toString(): String {
+        return "$mode $name\t$hash"
+    }
+}

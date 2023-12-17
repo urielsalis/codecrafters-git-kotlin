@@ -30,6 +30,13 @@ class GitStorageManager(rootDirectory: File) {
         }
     }
 
+    fun getType(hash: String): GitObjectType {
+        val file = getObjectFile(hash)
+        val decompressedData = decompress(file)
+        val buffer = ByteBuffer.wrap(decompressedData)
+        return GitObjectType.from(String(buffer.takeUntilAndSkip(' '.code.toByte())))
+    }
+
     fun getObject(hash: String): RawGitObject {
         val file = getObjectFile(hash)
         val decompressedData = decompress(file)
