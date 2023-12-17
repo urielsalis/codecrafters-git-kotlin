@@ -1,6 +1,6 @@
 package com.urielsalis.codecrafters.git.command
 
-import com.urielsalis.codecrafters.git.GitFolderManager
+import com.urielsalis.codecrafters.git.GitStorageManager
 import picocli.CommandLine.Command
 import java.io.File
 import java.util.concurrent.Callable
@@ -8,8 +8,8 @@ import java.util.concurrent.Callable
 @Command(name = "init")
 class InitCommand : Callable<Unit> {
     override fun call() {
-        val manager = GitFolderManager(File("."))
-        manager.initRepository()
-        manager.setHead("ref: refs/heads/master")
+        val storage = GitStorageManager(File("."))
+        storage.initRepository()
+        storage.setHead("ref: refs/heads/master")
     }
 }

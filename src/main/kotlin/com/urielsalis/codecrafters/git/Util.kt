@@ -19,3 +19,5 @@ fun ByteBuffer.getNext(length: Int): ByteArray =
     ByteArray(length).apply {
         get(this)
     }
+
+fun ByteArray.toHexString() = joinToString("") { "%02x".format(it) }

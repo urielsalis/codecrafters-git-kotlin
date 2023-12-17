@@ -1,6 +1,7 @@
 package com.urielsalis.codecrafters.git
 
 import com.urielsalis.codecrafters.git.command.CatFileCommand
+import com.urielsalis.codecrafters.git.command.HashObjectCommand
 import com.urielsalis.codecrafters.git.command.InitCommand
 import picocli.CommandLine
 import picocli.CommandLine.Command
@@ -8,7 +9,7 @@ import picocli.CommandLine.Command
 @Command(
     name = "git",
     mixinStandardHelpOptions = true,
-    subcommands = [InitCommand::class, CatFileCommand::class],
+    subcommands = [InitCommand::class, CatFileCommand::class, HashObjectCommand::class],
 )
 class GitCommand
 

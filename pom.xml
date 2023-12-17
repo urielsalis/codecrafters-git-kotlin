@@ -16,6 +16,51 @@
         <kotlin.version>1.9.21</kotlin.version>
     </properties>
 
+    <profiles>
+        <profile>
+            <activation>
+                <property>
+                    <name>runLint</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>detekt-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <configuration>
+                                    <config>config/detekt.yaml</config>
+                                </configuration>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                                <phase>verify</phase>
+                            </execution>
+                        </executions>
+                        <groupId>com.github.ozsie</groupId>
+                        <version>1.23.4</version>
+                    </plugin>
+                    <plugin>
+                        <artifactId>ktlint-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>format</goal>
+                                    <goal>check</goal>
+                                </goals>
+                                <id>format-and-check</id>
+                            </execution>
+                        </executions>
+                        <groupId>com.github.gantsign.maven</groupId>
+                        <version>3.0.0</version>
+                    </plugin>
+                </plugins>
+            </build>
+            <id>runLint</id>
+        </profile>
+    </profiles>
+
     <build>
         <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
         <plugins>
@@ -65,34 +110,6 @@
                         <id>test-compile</id>
                         <goals>
                             <goal>test-compile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>com.github.ozsie</groupId>
-                <artifactId>detekt-maven-plugin</artifactId>
-                <version>1.23.4</version>
-                <executions>
-                    <execution>
-                        <phase>verify</phase>
-                        <goals><goal>check</goal></goals>
-                        <configuration>
-                            <config>config/detekt.yaml</config>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>com.github.gantsign.maven</groupId>
-                <artifactId>ktlint-maven-plugin</artifactId>
-                <version>3.0.0</version>
-                <executions>
-                    <execution>
-                        <id>format-and-check</id>
-                        <goals>
-                            <goal>format</goal>
-                            <goal>check</goal>
                         </goals>
                     </execution>
                 </executions>

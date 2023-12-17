@@ -1,7 +1,7 @@
 package com.urielsalis.codecrafters.git.command
 
-import com.urielsalis.codecrafters.git.GitFolderManager
 import com.urielsalis.codecrafters.git.GitObjectManager
+import com.urielsalis.codecrafters.git.GitStorageManager
 import picocli.CommandLine.Command
 import picocli.CommandLine.Option
 import picocli.CommandLine.Parameters
@@ -20,10 +20,10 @@ class CatFileCommand : Callable<Unit> {
         if (!prettyPrint) {
             TODO("Only pretty print is supported")
         }
-        val manager = GitFolderManager(File("."))
+        val storage = GitStorageManager(File("."))
         val parser = GitObjectManager()
-        val obj = manager.getObject(objectHash)
-        val parsedObj = parser.parse(obj)
+        val obj = storage.getObject(objectHash)
+        val parsedObj = parser.parse(objectHash, obj)
         print(parsedObj)
     }
 }
