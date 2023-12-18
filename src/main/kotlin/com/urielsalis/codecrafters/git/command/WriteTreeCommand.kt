@@ -39,7 +39,7 @@ class WriteTreeCommand : Callable<Unit> {
                     }
                 }
             } ?: emptyList()
-        val tree = storage.makeTree(entries)
+        val tree = parser.makeTree(entries)
         val hash = storage.writeObject(tree)
         return hash
     }

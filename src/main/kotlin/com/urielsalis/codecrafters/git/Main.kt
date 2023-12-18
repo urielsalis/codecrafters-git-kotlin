@@ -1,6 +1,7 @@
 package com.urielsalis.codecrafters.git
 
 import com.urielsalis.codecrafters.git.command.CatFileCommand
+import com.urielsalis.codecrafters.git.command.CloneCommand
 import com.urielsalis.codecrafters.git.command.CommitTreeCommand
 import com.urielsalis.codecrafters.git.command.HashObjectCommand
 import com.urielsalis.codecrafters.git.command.InitCommand
@@ -13,7 +14,7 @@ import picocli.CommandLine.Command
 @Command(
     name = "git",
     mixinStandardHelpOptions = true,
-    subcommands = [InitCommand::class, CatFileCommand::class, HashObjectCommand::class, LsTreeCommand::class, WriteTreeCommand::class, CommitTreeCommand::class],
+    subcommands = [InitCommand::class, CatFileCommand::class, HashObjectCommand::class, LsTreeCommand::class, WriteTreeCommand::class, CommitTreeCommand::class, CloneCommand::class],
 )
 class GitCommand
 

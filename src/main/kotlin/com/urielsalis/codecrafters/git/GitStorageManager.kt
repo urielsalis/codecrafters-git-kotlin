@@ -1,7 +1,7 @@
 package com.urielsalis.codecrafters.git
 
 import com.urielsalis.codecrafters.git.domain.GitObjectType
-import com.urielsalis.codecrafters.git.domain.GitTreeEntry
+import com.urielsalis.codecrafters.git.domain.GitReference
 import com.urielsalis.codecrafters.git.domain.RawGitObject
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -33,8 +33,7 @@ class GitStorageManager(rootDirectory: File) {
 
     fun getType(hash: String): GitObjectType {
         val file = getObjectFile(hash)
-        val decompressedData = decompress(file)
-        val buffer = ByteBuffer.wrap(decompressedData)
+        val buffer = ByteBuffer.wrap(decompress(file))
         return GitObjectType.from(String(buffer.takeUntilAndSkip(' '.code.toByte())))
     }
 
@@ -63,36 +62,19 @@ class GitStorageManager(rootDirectory: File) {
         compress(getDiskRepresentation(obj), file)
     }
 
-    fun getObjectHash(obj: RawGitObject): String {
+    fun writeReference(reference: GitReference) {
+        val file = File(gitDirectory, reference.name)
+        file.parentFile.mkdirs()
+        file.writeText("${reference.hash}\n")
+    }
+
+    fun getObjectHash(obj: RawGitObject) = sha1(getDiskRepresentation(obj))
+
+    private fun sha1(bytes: ByteArray): String {
         val sha1 = MessageDigest.getInstance("SHA-1")
         sha1.reset()
-        sha1.update(getDiskRepresentation(obj))
+        sha1.update(bytes)
         return sha1.digest().toHexString()
-    }
-
-    fun makeTree(entries: List<GitTreeEntry>): RawGitObject {
-        val entriesRaw =
-            entries.sortedBy { it.name }
-                .map { "${it.mode} ${it.name}\u0000".toByteArray() + it.hash.hexToByteArray() }
-        if (entriesRaw.isEmpty()) {
-            return RawGitObject(GitObjectType.TREE, byteArrayOf())
-        }
-        return RawGitObject(GitObjectType.TREE, entriesRaw.reduce { acc, bytes -> acc + bytes })
-    }
-
-    fun makeCommit(
-        treeHash: String,
-        message: String,
-        parameters: Map<String, String>,
-    ): RawGitObject {
-        val content =
-            mutableListOf(
-                "tree $treeHash",
-                *parameters.map { (key, value) -> "$key $value" }.toTypedArray(),
-                "",
-                message,
-            ).joinToString("\n").toByteArray()
-        return RawGitObject(GitObjectType.COMMIT, content)
     }
 
     private fun getDiskRepresentation(obj: RawGitObject): ByteArray =

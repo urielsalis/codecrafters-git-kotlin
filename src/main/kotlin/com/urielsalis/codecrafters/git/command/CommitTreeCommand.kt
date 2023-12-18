@@ -1,5 +1,6 @@
 package com.urielsalis.codecrafters.git.command
 
+import com.urielsalis.codecrafters.git.GitObjectManager
 import com.urielsalis.codecrafters.git.GitStorageManager
 import picocli.CommandLine.Command
 import picocli.CommandLine.Option
@@ -21,6 +22,7 @@ class CommitTreeCommand : Callable<Unit> {
 
     override fun call() {
         val storage = GitStorageManager(File("."))
+        val parser = GitObjectManager()
         val currentTime = Instant.now().epochSecond
         val parameters =
             mutableMapOf(
@@ -30,7 +32,7 @@ class CommitTreeCommand : Callable<Unit> {
         if (parentCommit != null) {
             parameters["parent"] = parentCommit!!
         }
-        val commit = storage.makeCommit(treeHash, message + "\n", parameters)
+        val commit = parser.makeCommit(treeHash, message + "\n", parameters)
         val hash = storage.getObjectHash(commit)
         storage.writeObject(hash, commit)
         println(hash)

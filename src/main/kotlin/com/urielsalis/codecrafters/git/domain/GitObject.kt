@@ -20,3 +20,11 @@ data class GitTreeEntry(val mode: String, val name: String, val hash: String) {
         return "$mode $name\t$hash"
     }
 }
+
+data class GitCommitObject(
+    override val hash: String,
+    val tree: String,
+    val parent: String? = null,
+    val message: String,
+    val parameters: Map<String, String>,
+) : GitObject(hash)
